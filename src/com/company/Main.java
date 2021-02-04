@@ -8,6 +8,6 @@ public class Main {
 	    case 1 -> 4;
 	    case 2 -> 6;
         default -> 8;
-    };
+	};
     }
 }
