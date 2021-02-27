@@ -16,7 +16,6 @@ class Info {                                         //вспомогатель�
 	public String toString() {
 		return vertex + weight;
 	}
-
 }
 
 public class Graph {
@@ -45,23 +44,19 @@ public class Graph {
 		if (!hasVertex(vertexNameIn)) addVertex(vertexNameIn);
 		Map<String, Info> edges = outVertexMap.get(vertexNameOut);
 		edges.put(vertexNameIn, new Info(vertexNameIn, weight));
-		Map<String, Info> incCurves = new HashMap<>(inVertexMap.get(vertexNameIn));
+		Map<String, Info> incCurves = inVertexMap.get(vertexNameIn);
 		incCurves.put(vertexNameOut, new Info(vertexNameOut, weight));
 	}
 
 	public void removeVertex(String vertexName){
 		outVertexMap.remove(vertexName);
 		for (Map<String, Info> value : outVertexMap.values()) {
-			if (value.containsKey(vertexName)) {
-					value.remove(vertexName);
-			}
+			value.remove(vertexName);
 		}
 
 		inVertexMap.remove(vertexName);
 		for (Map<String, Info> value : inVertexMap.values()) {
-			if (value.containsKey(vertexName)) {
-					value.remove(vertexName);
-			}
+			value.remove(vertexName);
 		}
 	}
 
@@ -86,7 +81,6 @@ public class Graph {
 				value.put(newVertexName, value.get(vertexName));
 				value.remove(vertexName);
 			}
-			break;
 		}
 	}
 
