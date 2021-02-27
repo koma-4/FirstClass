@@ -1,5 +1,6 @@
 package com.company;
 
+
 import java.util.*;
 
 class Info {                                         //вспомогательный класс
@@ -9,9 +10,6 @@ class Info {                                         //вспомогатель�
 	public Info (String vertex, int weight) {
 		this.vertex = vertex;
 		this.weight = weight;
-	}
-	public String getVertex() {
-		return vertex;
 	}
 
 	@Override
@@ -23,18 +21,18 @@ class Info {                                         //вспомогатель�
 
 public class Graph {
 
-	private final Map<String, List<Info>> outVertexMap;
-	private final Map<String, List<Info>> inVertexMap;
+	private final Map<String, Map<String, Info>> outVertexMap;
+	private final Map<String, Map<String, Info>> inVertexMap;
 
-	public Graph (Map<String, List<Info>> outVertexMap, Map<String, List<Info>> inVertexMap) {
+	public Graph (Map<String, Map<String, Info>> outVertexMap, Map<String, Map<String, Info>> inVertexMap) {
 		this.outVertexMap = outVertexMap;
 		this.inVertexMap = inVertexMap;
 	}
 
 	public void addVertex(String vertexName){
 		if (!hasVertex(vertexName)) {
-			outVertexMap.put(vertexName, new ArrayList<>());
-			inVertexMap.put(vertexName, new ArrayList<>());
+			outVertexMap.put(vertexName, new HashMap<>());
+			inVertexMap.put(vertexName, new HashMap<>());
 		}
 	}
     public boolean hasVertex(String vertexName){
@@ -44,29 +42,30 @@ public class Graph {
 	public void addEdge(String vertexNameOut, String vertexNameIn, int weight){
 		if (!hasVertex(vertexNameOut)) addVertex(vertexNameOut);
 		if (!hasVertex(vertexNameIn)) addVertex(vertexNameIn);
-		List<Info> edges = outVertexMap.get(vertexNameOut);
-		edges.add(new Info(vertexNameIn, weight));
-		List<Info> incCurves = new ArrayList<>(List.of());
-		incCurves.addAll(inVertexMap.get(vertexNameIn));
-		incCurves.add(new Info(vertexNameOut, weight));
+		Map<String, Info> edges = outVertexMap.get(vertexNameOut);
+		edges.put(vertexNameIn, new Info(vertexNameIn, weight));
+		Map<String, Info> incCurves = new HashMap<>(Map.of());
+		incCurves.putAll(inVertexMap.get(vertexNameIn));
+		incCurves.put(vertexNameOut, new Info(vertexNameOut, weight));
 		inVertexMap.put(vertexNameIn,incCurves);
 	}
 
 	public void removeVertex(String vertexName){
 		outVertexMap.remove(vertexName);
-		for (String key : outVertexMap.keySet()) {
-			for (Info each : outVertexMap.get(key)) {
-				if (each.getVertex().equals(vertexName)) {
-					outVertexMap.get(key).remove(each);
+		for (Map<String, Info> value : outVertexMap.values()) {
+			if (value.containsKey(vertexName)) {
+				while (value.containsKey(vertexName)) {
+					value.remove(vertexName);
 					break;
 				}
 			}
 		}
+
 		inVertexMap.remove(vertexName);
-		for (String key : inVertexMap.keySet()) {
-			for (Info each : inVertexMap.get(key)) {
-				if (each.getVertex().equals(vertexName)) {
-					inVertexMap.get(key).remove(each);
+		for (Map<String, Info> value : inVertexMap.values()) {
+			if (value.containsKey(vertexName)) {
+				while (value.containsKey(vertexName)) {
+					value.remove(vertexName);
 					break;
 				}
 			}
@@ -74,72 +73,58 @@ public class Graph {
 	}
 
 	public void removeEdge(String vertexNameOut, String vertexNameIn){
-		List<Info> edges = outVertexMap.get(vertexNameOut);
-		for (Info each : edges) {
-			if (each.getVertex().equals(vertexNameIn)) {
-				edges.remove(each);
-				outVertexMap.put(vertexNameOut,edges);
-			}
-		}
-		List<Info> inEdges = inVertexMap.get(vertexNameIn);
-		List<Info> inEdgesToRemove = new ArrayList<>(List.of());
-		for (Info each : inEdges) {
-			if(each.getVertex().equals(vertexNameOut)) inEdgesToRemove.add(each);
-		}
-		inEdges.removeAll(inEdgesToRemove);
-		inVertexMap.put(vertexNameIn, inEdges);
+		outVertexMap.get(vertexNameOut).remove(vertexNameIn);
+		inVertexMap.get(vertexNameIn).remove(vertexNameOut);
 	}
 
 	public void renameVertex(String vertexName, String newVertexName){
-		List<Info> edges = outVertexMap.get(vertexName);
+		Map<String, Info> edges = outVertexMap.get(vertexName);
 		outVertexMap.remove(vertexName);
-		for (List<Info> value : outVertexMap.values()) {
-			for (Info each : value) {
-				if (each.getVertex().equals(vertexName)) each.vertex = newVertexName;
+		for (Map<String, Info> value : outVertexMap.values()) {
+			if (value.containsKey(vertexName)) {
+				value.get(vertexName).vertex = newVertexName;
+				value.put(newVertexName, value.get(vertexName));
+				value.remove(vertexName);
 			}
 		}
 		outVertexMap.put(newVertexName, edges);
 
-		for (String key : inVertexMap.keySet()) {
-			for (Info each : inVertexMap.get(key)) {
-				if (each.getVertex().equals(vertexName)) {
-					each.vertex = newVertexName;
-					break;
-				}
+		for (Map<String, Info> value : inVertexMap.values()) {
+			if (value.containsKey(vertexName)) {
+				value.get(vertexName).vertex = newVertexName;
+				value.put(newVertexName, value.get(vertexName));
+				value.remove(vertexName);
 			}
+			break;
 		}
 	}
 
 	public void changeWeight(String vertexNameOut, String vertexNameIn, int newWeight){
-		List<Info> edges = outVertexMap.get(vertexNameOut);
-		for (Info each : edges) {
-			if (each.getVertex().equals(vertexNameIn)) each.weight = newWeight;
-		}
-		List<Info> inEdges = inVertexMap.get(vertexNameIn);
-		for (Info each : inEdges) {
-			if (each.getVertex().equals(vertexNameOut)) each.weight = newWeight;
-		}
+		Map<String, Info> edges = outVertexMap.get(vertexNameOut);
+		edges.get(vertexNameIn).weight = newWeight;
+		Map<String, Info> inEdges = inVertexMap.get(vertexNameIn);
+		inEdges.get(vertexNameOut).weight = newWeight;
 	}
 
 	public List<Info> outgoingCurves(String vertexName){
 		List<Info> curves = new ArrayList<>(List.of());
-		curves.addAll(outVertexMap.get(vertexName));
+		curves.addAll(outVertexMap.get(vertexName).values());
 		return curves;
 	}
 
 	public List<Info> incomingCurves(String vertexName) {
 		List<Info> curves = new ArrayList<>(List.of());
-		curves.addAll(inVertexMap.get(vertexName));
+		curves.addAll(inVertexMap.get(vertexName).values());
 		return curves;
 	}
 
 	static Graph empty() {
-		Map<String, List<Info>> expected = new HashMap<>();
-		Map<String, List<Info>> inExpected = new HashMap<>();
+		Map<String, Map<String, Info>> expected = new HashMap<>();
+		Map<String, Map<String, Info>> inExpected = new HashMap<>();
 		return new Graph(expected, inExpected);
 	}
 
-	public Map<String, List<Info>> getVertexMap() {
+	public Map<String, Map<String, Info>> getVertexMap() {
 		return outVertexMap;
 	}
 

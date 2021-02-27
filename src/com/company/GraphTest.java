@@ -12,28 +12,30 @@ class GraphTest {
 
     @Test
     void testAddVertex() {
-        Info info = new Info("B",2);
-        Info info1 = new Info("D", 4);
-        Info info2 = new Info("C", 3);
-        Info info3 = new Info("A", 1);
-        Info info4 = new Info("C", 5);
-        Map<String, List<Info>> expected = new HashMap<>();
-        Map<String, List<Info>> inExpected = new HashMap<>();
-        expected.put("A",List.of(info, info4));
-        expected.put("B", List.of(info1));
-        expected.put("D", List.of(info3, info2));
-        expected.put("C", List.of());
-        inExpected.put("A", List.of(new Info("D", 1)));
-        inExpected.put("B", List.of(new Info("A", 2)));
-        inExpected.put("C", List.of(new Info("A", 5), new Info("D", 3)));
-        inExpected.put("D", List.of(new Info("B", 4)));
+        Map<String,Info> info = new HashMap<>(Map.of("B", new Info("B",2)));
+        info.put("C", new Info("C", 5));
+        Map<String,Info> info1 = new HashMap<>(Map.of("D", new Info("D", 4)));
+        Map<String,Info> info2 = new HashMap<>(Map.of("C",new Info("C", 3)));
+        info2.put("A", new Info("A", 1));
+        Map<String, Map<String, Info>> expected = new HashMap<>();
+        Map<String, Map<String, Info>> inExpected = new HashMap<>();
+        expected.put("A", info);
+        expected.put("B", info1);
+        expected.put("D", info2);
+        expected.put("C", Map.of());
+        Map<String,Info> info3 = new HashMap<>(Map.of("D", new Info("D", 3)));
+        info3.put("A", new Info("A", 5));
+        inExpected.put("A", Map.of("D", new Info("D", 1)));
+        inExpected.put("B", Map.of("A", new Info("A", 2)));
+        inExpected.put("C", info3);
+        inExpected.put("D", Map.of("B", new Info("B", 4)));
 
         Graph expect = new Graph(expected, inExpected);
         expect.addVertex("F");
 
 
-        expected.put("F", List.of());
-        inExpected.put("F", List.of());
+        expected.put("F", Map.of());
+        inExpected.put("F", Map.of());
         Graph actual = new Graph(expected,inExpected);
         assertEquals(expect.getVertexMap(),actual.getVertexMap());
     }
@@ -41,10 +43,10 @@ class GraphTest {
 
     @Test
     void testAddEdge() {
-        Map<String, List<Info>> expected = new HashMap<>();
-        Map<String, List<Info>> inExpected = new HashMap<>();
-        expected.put("C", List.of());
-        inExpected.put("C", List.of());
+        Map<String, Map<String, Info>> expected = new HashMap<>();
+        Map<String, Map<String, Info>> inExpected = new HashMap<>();
+        expected.put("C", Map.of());
+        inExpected.put("C", Map.of());
         Graph expect = new Graph(expected, inExpected);
         expect.addEdge("A", "B", 2);
         expect.addEdge("A","C",5);
@@ -52,21 +54,24 @@ class GraphTest {
         expect.addEdge("D","A",1);
         expect.addEdge("D","C",3);
 
-        Map<String, List<Info>> actual = new HashMap<>();
-        Map<String, List<Info>> inActual = new HashMap<>();
-        Info info = new Info("B",2);
-        Info info1 = new Info("D", 4);
-        Info info2 = new Info("C", 3);
-        Info info3 = new Info("A", 1);
-        Info info4 = new Info("C", 5);
-        actual.put("A",List.of(info, info4));
-        actual.put("B", List.of(info1));
-        actual.put("D", List.of(info3, info2));
-        actual.put("C", List.of());
-        inActual.put("A", List.of(new Info("D", 1)));
-        inActual.put("B", List.of(new Info("A", 2)));
-        inActual.put("C", List.of(new Info("A", 5), new Info("D", 3)));
-        inActual.put("D", List.of(new Info("B", 4)));
+        Map<String, Map<String, Info>> actual = new HashMap<>();
+        Map<String, Map<String, Info>> inActual = new HashMap<>();
+        Map<String,Info> info = new HashMap<>(Map.of("B", new Info("B",2)));
+        info.put("C", new Info("C", 5));
+        Map<String,Info> info1 = new HashMap<>(Map.of("D", new Info("D", 4)));
+        Map<String,Info> info2 = new HashMap<>(Map.of("C",new Info("C", 3)));
+        info2.put("A", new Info("A", 1));
+        actual.put("A", info);
+        actual.put("B", info1);
+        actual.put("D", info2);
+        actual.put("C", Map.of());
+
+        Map<String,Info> info3 = new HashMap<>(Map.of("D", new Info("D", 3)));
+        info3.put("A", new Info("A", 5));
+        inActual.put("A", Map.of("D", new Info("D", 1)));
+        inActual.put("B", Map.of("A", new Info("A", 2)));
+        inActual.put("C", info3);
+        inActual.put("D", Map.of("B", new Info("B", 4)));
 
         Graph act = new Graph(actual,inActual);
 
@@ -76,10 +81,10 @@ class GraphTest {
 
     @Test
     void removeEdge() {
-        Map<String, List<Info>> expected = new HashMap<>();
-        Map<String, List<Info>> inExpected = new HashMap<>();
-        expected.put("C", List.of());
-        inExpected.put("C", List.of());
+        Map<String, Map<String, Info>> expected = new HashMap<>();
+        Map<String, Map<String, Info>> inExpected = new HashMap<>();
+        expected.put("C", Map.of());
+        inExpected.put("C", Map.of());
         Graph expect = new Graph(expected,inExpected);
         expect.addEdge("A", "B", 2);
         expect.addEdge("A","C",5);
@@ -90,10 +95,10 @@ class GraphTest {
         expect.removeEdge("B", "D");
         expect.removeEdge("D","A");
 
-        Map<String, List<Info>> actual = new HashMap<>();
-        Map<String, List<Info>> inActual = new HashMap<>();
-        actual.put("C", List.of());
-        inActual.put("C", List.of());
+        Map<String, Map<String, Info>> actual = new HashMap<>();
+        Map<String, Map<String, Info>> inActual = new HashMap<>();
+        actual.put("C", Map.of());
+        inActual.put("C", Map.of());
         Graph act = new Graph(actual, inActual);
         act.addEdge("A", "B", 2);
         act.addEdge("A","C",5);
@@ -107,10 +112,10 @@ class GraphTest {
 
     @Test
     void testRemoveVertex() {
-        Map<String, List<Info>> expected = new HashMap<>();
-        expected.put("C", List.of());
-        Map<String, List<Info>> inExpected = new HashMap<>();
-        inExpected.put("C", List.of());
+        Map<String, Map<String, Info>> expected = new HashMap<>();
+        expected.put("C", Map.of());
+        Map<String, Map<String, Info>> inExpected = new HashMap<>();
+        inExpected.put("C", Map.of());
         Graph expect = new Graph(expected, inExpected);
         expect.addEdge("A", "B", 2);
         expect.addEdge("A","C",5);
@@ -120,17 +125,17 @@ class GraphTest {
         expect.addEdge("D","C",3);
         expect.removeVertex("D");
 
-        Map<String, List<Info>> actual = new HashMap<>();
-        Map<String, List<Info>> inActual = new HashMap<>();
-        inActual.put("C", List.of());
-        Info info = new Info("B",2);
-        Info info4 = new Info("C", 5);
-        actual.put("A",List.of(info, info4));
-        actual.put("B", List.of());
-        actual.put("C", List.of());
-        inActual.put("B", List.of(new Info("A", 2)));
-        inActual.put("C", List.of(new Info("A", 5)));
-        inActual.put("A", List.of());
+        Map<String, Map<String, Info>> actual = new HashMap<>();
+        Map<String, Map<String, Info>> inActual = new HashMap<>();
+        inActual.put("C", Map.of());
+        Map<String, Info> info = new HashMap<>(Map.of("B", new Info("B",2)));
+        info.put("C", new Info("C", 5));
+        actual.put("A",info);
+        actual.put("B", Map.of());
+        actual.put("C", Map.of());
+        inActual.put("B", Map.of("A", new Info("A", 2)));
+        inActual.put("C", Map.of("A", new Info("A", 5)));
+        inActual.put("A", Map.of());
         Graph act = new Graph(actual, inActual);
 
         assertEquals(expect.getVertexMap().toString(),act.getVertexMap().toString());
@@ -139,25 +144,25 @@ class GraphTest {
 
     @Test
     void testRenameVertex() {
-        Map<String, List<Info>> expected = new HashMap<>();
-        Map<String, List<Info>> inExpected = new HashMap<>();
-        inExpected.put("C", List.of());
-        expected.put("C", List.of());
+        Map<String, Map<String, Info>> expected = new HashMap<>();
+        Map<String, Map<String, Info>> inExpected = new HashMap<>();
+        inExpected.put("C", Map.of());
+        expected.put("C", Map.of());
         Graph expect = new Graph(expected, inExpected);
         expect.addEdge("A", "B", 2);
         expect.addEdge("A","C",5);
         expect.renameVertex("A","center");
 
-        Map<String, List<Info>> actual = new HashMap<>();
-        Map<String, List<Info>> inActual = new HashMap<>();
-        Info info = new Info("B",2);
-        Info info4 = new Info("C", 5);
-        actual.put("center",List.of(info, info4));
-        actual.put("B", List.of());
-        actual.put("C", List.of());
-        inActual.put("B", List.of(new Info("center", 2)));
-        inActual.put("C", List.of(new Info("center", 5)));
-        inActual.put("center", List.of());
+        Map<String, Map<String, Info>> actual = new HashMap<>();
+        Map<String, Map<String, Info>> inActual = new HashMap<>();
+        Map<String, Info> info = new HashMap<>(Map.of("B", new Info("B",2)));
+        info.put("C", new Info("C", 5));
+        actual.put("center",info);
+        actual.put("B", Map.of());
+        actual.put("C", Map.of());
+        inActual.put("B", Map.of("center", new Info("center", 2)));
+        inActual.put("C", Map.of("center", new Info("center", 5)));
+        inActual.put("center", Map.of());
         Graph act = new Graph(actual, inActual);
 
         assertEquals(expect.getVertexMap().toString(),act.getVertexMap().toString());
@@ -165,25 +170,25 @@ class GraphTest {
 
     @Test
     void testChangeWeight() {
-        Map<String, List<Info>> expected = new HashMap<>();
-        Map<String, List<Info>> inExpected = new HashMap<>();
-        inExpected.put("C", List.of());
-        expected.put("C", List.of());
+        Map<String, Map<String, Info>> expected = new HashMap<>();
+        Map<String, Map<String, Info>> inExpected = new HashMap<>();
+        inExpected.put("C", Map.of());
+        expected.put("C", Map.of());
         Graph expect = new Graph(expected, inExpected);
         expect.addEdge("A", "B", 2);
         expect.addEdge("A","C",5);
         expect.changeWeight("A", "B", 10);
 
-        Map<String, List<Info>> actual = new HashMap<>();
-        Map<String, List<Info>> inActual = new HashMap<>();
-        Info info = new Info("B",10);
-        Info info4 = new Info("C", 5);
-        actual.put("A",List.of(info, info4));
-        actual.put("B", List.of());
-        actual.put("C", List.of());
-        inActual.put("B", List.of(new Info("A", 10)));
-        inActual.put("C", List.of(new Info("A", 5)));
-        inActual.put("A", List.of());
+        Map<String, Map<String, Info>> actual = new HashMap<>();
+        Map<String, Map<String, Info>> inActual = new HashMap<>();
+        Map<String, Info> info = new HashMap<>(Map.of("B", new Info("B",10)));
+        info.put("C", new Info("C", 5));
+        actual.put("A", info);
+        actual.put("B", Map.of());
+        actual.put("C", Map.of());
+        inActual.put("B", Map.of("A", new Info("A", 10)));
+        inActual.put("C", Map.of("A", new Info("A", 5)));
+        inActual.put("A", Map.of());
         Graph act = new Graph(actual, inActual);
 
         assertEquals(expect.getVertexMap().toString(),act.getVertexMap().toString());
@@ -191,10 +196,10 @@ class GraphTest {
 
     @Test
     void testOutgoingCurves() {
-        Map<String, List<Info>> expected = new HashMap<>();
-        Map<String, List<Info>> inExpected = new HashMap<>();
-        inExpected.put("C", List.of());
-        expected.put("C", List.of());
+        Map<String, Map<String, Info>> expected = new HashMap<>();
+        Map<String, Map<String, Info>> inExpected = new HashMap<>();
+        inExpected.put("C", Map.of());
+        expected.put("C", Map.of());
         Graph expect = new Graph(expected, inExpected);
         expect.addEdge("A", "B", 2);
         expect.addEdge("A","C",5);
@@ -210,10 +215,10 @@ class GraphTest {
 
     @Test
     void testIncomingCurves() {
-        Map<String, List<Info>> expected = new HashMap<>();
-        Map<String, List<Info>> inExpected = new HashMap<>();
-        inExpected.put("C", List.of());
-        expected.put("C", List.of());
+        Map<String, Map<String, Info>> expected = new HashMap<>();
+        Map<String, Map<String, Info>> inExpected = new HashMap<>();
+        inExpected.put("C", Map.of());
+        expected.put("C", Map.of());
         Graph expect = new Graph (expected, inExpected);
         expect.addEdge("A", "B", 2);
         expect.addEdge("A","C",5);
@@ -222,15 +227,15 @@ class GraphTest {
         List<Info> expectation = expect.incomingCurves("C");
 
         List<Info> reality = new ArrayList<>
-                (List.of(new Info("A", 5), new Info("D", 3), new Info("B", 8)));
+                (List.of(new Info("D", 3), new Info("A", 5), new Info("B", 8)));
         assertEquals(expectation.toString(), reality.toString());
     }
 
     @Test
     void testEmpty() {
         Graph expect = Graph.empty();
-        Map<String, List<Info>> actual = new HashMap<>();
-        Map<String, List<Info>> inActual = new HashMap<>();
+        Map<String, Map<String, Info>> actual = new HashMap<>();
+        Map<String, Map<String, Info>> inActual = new HashMap<>();
         Graph act = new Graph(actual, inActual);
 
         assertEquals(expect.getVertexMap().toString(),act.getVertexMap().toString());
