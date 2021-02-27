@@ -44,30 +44,22 @@ public class Graph {
 		if (!hasVertex(vertexNameIn)) addVertex(vertexNameIn);
 		Map<String, Info> edges = outVertexMap.get(vertexNameOut);
 		edges.put(vertexNameIn, new Info(vertexNameIn, weight));
-		Map<String, Info> incCurves = new HashMap<>(Map.of());
-		incCurves.putAll(inVertexMap.get(vertexNameIn));
+		Map<String, Info> incCurves = new HashMap<>(inVertexMap.get(vertexNameIn));
 		incCurves.put(vertexNameOut, new Info(vertexNameOut, weight));
-		inVertexMap.put(vertexNameIn,incCurves);
 	}
 
 	public void removeVertex(String vertexName){
 		outVertexMap.remove(vertexName);
 		for (Map<String, Info> value : outVertexMap.values()) {
 			if (value.containsKey(vertexName)) {
-				while (value.containsKey(vertexName)) {
 					value.remove(vertexName);
-					break;
-				}
 			}
 		}
 
 		inVertexMap.remove(vertexName);
 		for (Map<String, Info> value : inVertexMap.values()) {
 			if (value.containsKey(vertexName)) {
-				while (value.containsKey(vertexName)) {
 					value.remove(vertexName);
-					break;
-				}
 			}
 		}
 	}
@@ -78,8 +70,6 @@ public class Graph {
 	}
 
 	public void renameVertex(String vertexName, String newVertexName){
-		Map<String, Info> edges = outVertexMap.get(vertexName);
-		outVertexMap.remove(vertexName);
 		for (Map<String, Info> value : outVertexMap.values()) {
 			if (value.containsKey(vertexName)) {
 				value.get(vertexName).vertex = newVertexName;
@@ -87,7 +77,7 @@ public class Graph {
 				value.remove(vertexName);
 			}
 		}
-		outVertexMap.put(newVertexName, edges);
+		outVertexMap.put(newVertexName, outVertexMap.remove(vertexName));
 
 		for (Map<String, Info> value : inVertexMap.values()) {
 			if (value.containsKey(vertexName)) {
