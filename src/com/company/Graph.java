@@ -35,7 +35,8 @@ public class Graph {
 			inVertexMap.put(vertexName, new HashMap<>());
 		}
 	}
-    public boolean hasVertex(String vertexName){
+
+	public boolean hasVertex(String vertexName){
 		return outVertexMap.containsKey(vertexName);
 	}
 
